@@ -1,9 +1,9 @@
 package com.example.fisherybackend.payloads.response;
 
-public class MembersResponse {
+public class CommonResponse {
     private String message;
 
-    public MembersResponse(String message){
+    public CommonResponse(String message){
         this.message = message;
     }
 
