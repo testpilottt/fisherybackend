@@ -10,7 +10,8 @@ import com.example.fisherybackend.service.FisheringMadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class FisheringMadeServiceImpl implements FisheringMadeService {
@@ -24,7 +25,7 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
     public CommonResponse createFisheringMade(FisheringMadeRequest fisheringMadeRequest) {
 
         FisheringMade fisheringMade = new FisheringMade();
-        Members members = membersRepository.findById(fisheringMadeRequest.getMemberID()).get();
+        Members members = membersRepository.findById(fisheringMadeRequest.getMemberId()).get();
 
         fisheringMade.setMembers(members);
         fisheringMade.setCountry(fisheringMadeRequest.getCountry());
@@ -38,5 +39,10 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         fisheringMadeRepository.save(fisheringMade);
 
         return new CommonResponse("New Member Created");
+    }
+
+    @Override
+    public List<FisheringMade> getFisheringMadeByMemberId(Long memberId) {
+        return fisheringMadeRepository.searchFisheringMadeByMembers(memberId);
     }
 }

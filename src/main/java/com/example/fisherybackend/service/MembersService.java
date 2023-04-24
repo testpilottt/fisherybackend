@@ -13,4 +13,9 @@ public interface MembersService {
 
     CommonResponse createMember(MembersRequest membersRequest);
 
+    CommonResponse updateMember(MembersRequest membersRequest);
+
+    void deleteMember(Long memberId);
+
+
 }

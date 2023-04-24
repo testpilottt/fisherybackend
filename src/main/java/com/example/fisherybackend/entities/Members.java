@@ -1,5 +1,6 @@
 package com.example.fisherybackend.entities;
 
+import com.example.fisherybackend.enums.AccessLevel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class Members {
     @Id
     @GeneratedValue
-    private Long userId;
+    private Long memberId;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -26,6 +27,8 @@ public class Members {
 
     private String lastName;
     private String password;
+
+    @Enumerated(EnumType.STRING)
     private AccessLevel accessLevel;
     private Long hoursLogged;
     @Lob

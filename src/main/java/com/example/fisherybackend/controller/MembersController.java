@@ -21,11 +21,20 @@ public class MembersController {
     private MembersService membersService;
 
     @PostMapping("/membersLogin")
-    public ResponseEntity<HttpStatus> memberLoginByUsernamePassword(@RequestBody MembersRequest membersRequest){
+    public ResponseEntity<Members> memberLoginByUsernamePassword(@RequestBody MembersRequest membersRequest) {
 
         Optional<Members> member = membersService.memberLoginByUsernamePassword(membersRequest.getUsername(), membersRequest.getPassword());
 
-        return member.isPresent() ? new ResponseEntity<>(HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        Members reponseMember = new Members();
+
+        if (!member.isPresent()) {
+            reponseMember.setMemberId(-1L);
+            return new ResponseEntity<>(reponseMember, HttpStatus.UNAUTHORIZED);
+        } else {
+            reponseMember.setMemberId(member.get().getMemberId());
+            reponseMember.setAccessLevel(member.get().getAccessLevel());
+            return new ResponseEntity<>(reponseMember, HttpStatus.ACCEPTED);
+        }
     }
 
     @PostMapping("/createMember")
@@ -34,6 +43,19 @@ public class MembersController {
         CommonResponse commonResponse = membersService.createMember(membersRequest);
 
         return new ResponseEntity<>(commonResponse,HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/deleteMember/{memberId}")
+    public ResponseEntity<?> deleteEmployee(@PathVariable("memberId") Long memberId) {
+        membersService.deleteMember(memberId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/updateMember")
+    public ResponseEntity<CommonResponse> updateUser(@RequestBody MembersRequest membersRequest)
+    {
+        CommonResponse commonResponse = membersService.updateMember(membersRequest);
+        return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }
 
 }

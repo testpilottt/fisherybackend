@@ -30,8 +30,10 @@ public class FisheringMade {
 
     private Integer weightKg;
 
+    @Enumerated(EnumType.STRING)
     private Country country;
 
+    @Enumerated(EnumType.STRING)
     private Region region;
 
     @OneToOne
