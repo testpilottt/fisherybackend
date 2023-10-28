@@ -1,6 +1,7 @@
 package com.example.fisherybackend.controller;
 
 import com.example.fisherybackend.entities.Members;
+import com.example.fisherybackend.entities.TypeOfFish;
 import com.example.fisherybackend.payloads.request.FisheringMadeRequest;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.request.TypeOfFishRequest;
@@ -11,11 +12,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -41,5 +43,22 @@ public class TypeOfFishController {
 
         return new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
     }
+    @GetMapping("/retrieveFisheringRecord")
+    public ResponseEntity<List<TypeOfFish>> retrieveFisheringRecord(){
+        List<TypeOfFish> typeOfFishList = typeOfFishService.getAllTypeOfFish();
 
+        typeOfFishList.forEach(tof -> {
+            try {
+                int blobLength = (int) tof.getTypeOfFishPicture().length();
+                byte[] blobAsBytes = tof.getTypeOfFishPicture().getBytes(1, blobLength);
+                String encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
+
+                tof.setTypeOfFishPictureBase64(encodedString);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return new ResponseEntity<>(typeOfFishList, HttpStatus.OK);
+    }
 }

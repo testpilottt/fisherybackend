@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.sql.Blob;
-import java.util.List;
 
 @Getter
 public class TypeOfFishRequest {
@@ -21,6 +20,6 @@ public class TypeOfFishRequest {
 
     private String typeOfFishName;
     private Boolean isActive;
-    private Blob TypeOfFishPicture;
+    private byte[] typeOfFishPicture;
 
 }

@@ -1,9 +1,11 @@
 package com.example.fisherybackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Blob;
+import java.sql.Clob;
 
 @Entity
 @Getter
@@ -17,12 +19,13 @@ public class TypeOfFish {
     private Long typeOfFishId;
 
     private String typeOfFishName;
+
     @Lob
+    @JsonIgnore
     private Blob typeOfFishPicture;
 
     private Boolean active;
 
-    @OneToOne
-    private FisheringMade fisheringMade;
-
+    @Transient
+    private String typeOfFishPictureBase64;
 }
