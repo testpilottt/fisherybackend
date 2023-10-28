@@ -22,6 +22,7 @@ public class FisheringMade {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private Members members;
 
     private String location;

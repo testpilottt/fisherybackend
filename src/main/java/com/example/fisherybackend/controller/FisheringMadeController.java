@@ -41,8 +41,13 @@ public class FisheringMadeController {
                 int blobLength = (int) fm.getPictureOfFish().length();
                 byte[] blobAsBytes = fm.getPictureOfFish().getBytes(1, blobLength);
                 String encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
-
                 fm.setPictureOfFishBase64(encodedString);
+
+                blobLength = (int) fm.getTypeOfFish().getTypeOfFishPicture().length();
+                blobAsBytes = fm.getTypeOfFish().getTypeOfFishPicture().getBytes(1, blobLength);
+                encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
+
+                fm.getTypeOfFish().setTypeOfFishPictureBase64(encodedString);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
