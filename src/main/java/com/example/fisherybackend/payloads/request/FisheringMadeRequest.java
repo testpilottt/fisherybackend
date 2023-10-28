@@ -19,9 +19,9 @@ public class FisheringMadeRequest {
 
     private String location;
 
-    private Blob pictureOfFish;
+    private byte[] pictureOfFish;
 
-    private Integer weightKg;
+    private Double weightKg;
 
     private Country country;
 
@@ -29,6 +29,7 @@ public class FisheringMadeRequest {
 
     private TypeOfFish typeOfFish;
 
+    private Long typeOfFishId;
     //blockchain
     private String fisheringHash;
 }

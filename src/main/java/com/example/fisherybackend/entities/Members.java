@@ -1,6 +1,7 @@
 package com.example.fisherybackend.entities;
 
 import com.example.fisherybackend.enums.AccessLevel;
+import com.example.fisherybackend.enums.Country;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Members {
     @Id
     @GeneratedValue
@@ -37,4 +37,6 @@ public class Members {
     //blockchain
     private String membersHash;
 
+    @Transient
+    private Country country;
 }

@@ -12,6 +12,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class TypeOfFishServiceImpl implements TypeOfFishService {
@@ -32,6 +33,10 @@ public class TypeOfFishServiceImpl implements TypeOfFishService {
         }
 
         typeOfFish.setActive(typeOfFishRequest.getIsActive());
+
+        if (Objects.nonNull(typeOfFishRepository.findByTypeOfFishName(typeOfFish.getTypeOfFishName()))) {
+            return new CommonResponse("Name of fish must be unique", false);
+        }
 
         typeOfFishRepository.save(typeOfFish);
 

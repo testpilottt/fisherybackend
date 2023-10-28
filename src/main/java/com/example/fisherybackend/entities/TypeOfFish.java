@@ -12,12 +12,12 @@ import java.sql.Clob;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class TypeOfFish {
     @Id
     @GeneratedValue
     private Long typeOfFishId;
 
+    @Column(unique=true)
     private String typeOfFishName;
 
     @Lob

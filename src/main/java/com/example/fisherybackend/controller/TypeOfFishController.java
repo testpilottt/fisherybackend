@@ -33,7 +33,7 @@ public class TypeOfFishController {
 
         CommonResponse commonResponse = typeOfFishService.createTypeOfFish(typeOfFishRequest);
 
-        return new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(commonResponse, commonResponse.isValid() ? HttpStatus.CREATED : HttpStatus.ALREADY_REPORTED);
     }
 
     @PostMapping("/setActiveStatusOfTypeOfFish")
@@ -43,8 +43,8 @@ public class TypeOfFishController {
 
         return new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
     }
-    @GetMapping("/retrieveFisheringRecord")
-    public ResponseEntity<List<TypeOfFish>> retrieveFisheringRecord(){
+    @GetMapping("/retrieveTypeOfFish")
+    public ResponseEntity<List<TypeOfFish>> retrieveTypeOfFish(){
         List<TypeOfFish> typeOfFishList = typeOfFishService.getAllTypeOfFish();
 
         typeOfFishList.forEach(tof -> {

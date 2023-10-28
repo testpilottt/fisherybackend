@@ -10,7 +10,5 @@ import java.util.List;
 @Repository
 public interface FisheringMadeRepository extends JpaRepository<FisheringMade, Long> {
 
-    List<FisheringMade> searchFisheringMadeByMembers(Long memberId);
-//    List<FisheringMade> retrieveFisheringMadeByMemberId(Long memberId);
-
+    List<FisheringMade> searchFisheringMadeByMembersMemberId(Long memberId);
 }
