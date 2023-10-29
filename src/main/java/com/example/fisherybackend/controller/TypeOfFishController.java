@@ -1,12 +1,8 @@
 package com.example.fisherybackend.controller;
 
-import com.example.fisherybackend.entities.Members;
 import com.example.fisherybackend.entities.TypeOfFish;
-import com.example.fisherybackend.payloads.request.FisheringMadeRequest;
-import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.request.TypeOfFishRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
-import com.example.fisherybackend.service.MembersService;
 import com.example.fisherybackend.service.TypeOfFishService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Transactional
 @RestController
@@ -28,10 +22,10 @@ public class TypeOfFishController {
     @Autowired
     private TypeOfFishService typeOfFishService;
 
-    @PostMapping("/createTypeOfFish")
-    public ResponseEntity<CommonResponse> createTypeOfFish(@RequestBody TypeOfFishRequest typeOfFishRequest){
+    @PostMapping("/createOrUpdateTypeOfFish")
+    public ResponseEntity<CommonResponse> createOrUpdateTypeOfFish(@RequestBody TypeOfFishRequest typeOfFishRequest){
 
-        CommonResponse commonResponse = typeOfFishService.createTypeOfFish(typeOfFishRequest);
+        CommonResponse commonResponse = typeOfFishService.createOrUpdateTypeOfFish(typeOfFishRequest);
 
         return new ResponseEntity<>(commonResponse, commonResponse.isValid() ? HttpStatus.CREATED : HttpStatus.ALREADY_REPORTED);
     }

@@ -21,7 +21,7 @@ public class TypeOfFishServiceImpl implements TypeOfFishService {
     private TypeOfFishRepository typeOfFishRepository;
 
     @Override
-    public CommonResponse createTypeOfFish(TypeOfFishRequest typeOfFishRequest) {
+    public CommonResponse createOrUpdateTypeOfFish(TypeOfFishRequest typeOfFishRequest) {
         TypeOfFish typeOfFish = new TypeOfFish();
 
         typeOfFish.setTypeOfFishName(typeOfFishRequest.getTypeOfFishName());
@@ -34,8 +34,19 @@ public class TypeOfFishServiceImpl implements TypeOfFishService {
 
         typeOfFish.setActive(typeOfFishRequest.getIsActive());
 
-        if (Objects.nonNull(typeOfFishRepository.findByTypeOfFishName(typeOfFish.getTypeOfFishName()))) {
-            return new CommonResponse("Name of fish must be unique", false);
+        TypeOfFish existingTypeOfFish = typeOfFishRepository.findByTypeOfFishName(typeOfFish.getTypeOfFishName());
+
+        if (Objects.nonNull(existingTypeOfFish)) {
+            //Is Update?
+            if (typeOfFish.getActive().equals(existingTypeOfFish.getActive()) &&
+                    typeOfFish.getTypeOfFishPicture().equals(existingTypeOfFish.getTypeOfFishPicture())) {
+                return new CommonResponse("Name of fish must be unique", false);
+            } else {
+                existingTypeOfFish.setTypeOfFishPicture(typeOfFish.getTypeOfFishPicture());
+                existingTypeOfFish.setActive(typeOfFish.getActive());
+                typeOfFishRepository.save(existingTypeOfFish);
+                return new CommonResponse("TypeOfFish saved");
+            }
         }
 
         typeOfFishRepository.save(typeOfFish);

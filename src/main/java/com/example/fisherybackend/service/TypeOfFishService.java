@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface TypeOfFishService {
-    CommonResponse createTypeOfFish(TypeOfFishRequest typeOfFishRequest);
+    CommonResponse createOrUpdateTypeOfFish(TypeOfFishRequest typeOfFishRequest);
 
     CommonResponse setActiveStatusOfTypeOfFish(Long typeOfFishId, Boolean isActive);
 
