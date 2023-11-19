@@ -1,6 +1,7 @@
 package com.example.fisherybackend.service.impl;
 
 import com.example.fisherybackend.entities.TypeOfFish;
+import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.payloads.request.TypeOfFishRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
 import com.example.fisherybackend.repository.TypeOfFishRepository;
@@ -40,7 +41,7 @@ public class TypeOfFishServiceImpl implements TypeOfFishService {
             //Is Update?
             if (typeOfFish.getActive().equals(existingTypeOfFish.getActive()) &&
                     typeOfFish.getTypeOfFishPicture().equals(existingTypeOfFish.getTypeOfFishPicture())) {
-                return new CommonResponse("Name of fish must be unique", false);
+                return new CommonResponse("Name of fish must be unique", false, CommonResponseReason.NAME_OF_FISH_NOTUNIQUE);
             } else {
                 existingTypeOfFish.setTypeOfFishPicture(typeOfFish.getTypeOfFishPicture());
                 existingTypeOfFish.setActive(typeOfFish.getActive());

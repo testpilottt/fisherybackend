@@ -19,7 +19,7 @@ public class FisheringMadeRequest {
 
     private String location;
 
-    private byte[] pictureOfFish;
+    private String pictureOfFish;
 
     private Double weightKg;
 
@@ -30,6 +30,6 @@ public class FisheringMadeRequest {
     private TypeOfFish typeOfFish;
 
     private Long typeOfFishId;
-    //blockchain
-    private String fisheringHash;
+
+    private String hash;
 }

@@ -1,10 +1,11 @@
 package com.example.fisherybackend.service.impl;
 
+import com.example.fisherybackend.BlockChain.FisheringMadeBlockChain;
 import com.example.fisherybackend.entities.CountrySetting;
 import com.example.fisherybackend.entities.FisheringMade;
 import com.example.fisherybackend.entities.Members;
 import com.example.fisherybackend.entities.TypeOfFish;
-import com.example.fisherybackend.enums.Country;
+import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.enums.Region;
 import com.example.fisherybackend.payloads.request.FisheringMadeRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
@@ -22,6 +23,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -45,7 +47,7 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         CountrySetting countrySetting = countrySettingRepository.searchCountrySettingByCountry(fisheringMadeRequest.getCountry());
 
         if (Objects.isNull(countrySetting)) {
-            return new CommonResponse("Not created, country setting is missing.", false);
+            return new CommonResponse("Not created, country setting is missing.", false, CommonResponseReason.COUNTRY_NOTFOUND);
         }
 
         Members members = membersRepository.findById(fisheringMadeRequest.getMemberId()).get();
@@ -63,17 +65,32 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         fisheringMade.setTimeLog(LocalDateTime.now());
 
         try {
-            Blob blob = new SerialBlob(fisheringMadeRequest.getPictureOfFish());
+            Blob blob = new SerialBlob(fisheringMadeRequest.getPictureOfFish().getBytes());
             fisheringMade.setPictureOfFish(blob);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        fisheringMade.setFisheringHash(fisheringMadeRequest.getFisheringHash());
+        if (!isBlockChainValid(fisheringMade, getFisheringMadeByMemberId(fisheringMadeRequest.getMemberId()))) {
+            return new CommonResponse("Blockchain tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED);
+        }
 
         fisheringMadeRepository.save(fisheringMade);
 
         return new CommonResponse("New Member Created");
+    }
+
+    private boolean isBlockChainValid(FisheringMade fisheringMade, List<FisheringMade> fisheringMadeFromDB) {
+        FisheringMadeBlockChain fisheringMadeBlockChain = new FisheringMadeBlockChain();
+
+//        fisheringMadeFromDB.stream().sorted(Comparator.comparing(FisheringMade::getIndex))
+//                .forEach(fisheringMadeBlockChain::addExistingBlock);
+
+        if (Objects.nonNull(fisheringMade)) {
+            fisheringMadeBlockChain.addBlock(fisheringMade);
+        }
+
+        return fisheringMadeBlockChain.isChainValid();
     }
 
     private Region CalculateRegion(CountrySetting countrySetting, String location) {
@@ -104,6 +121,12 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
 
     @Override
     public List<FisheringMade> getFisheringMadeByMemberId(Long memberId) {
-        return fisheringMadeRepository.searchFisheringMadeByMembersMemberId(memberId);
+        List<FisheringMade> fisheringMadeListFromDb = fisheringMadeRepository.searchFisheringMadeByMembersMemberId(memberId);
+
+        if (!isBlockChainValid(null, fisheringMadeListFromDb)) {
+            throw new RuntimeException();
+        }
+
+        return fisheringMadeListFromDb;
     }
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 
@@ -21,7 +23,7 @@ public class FisheringMade {
     private Long fisheringId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "memberId")
     @JsonIgnore
     private Members members;
 
@@ -40,13 +42,66 @@ public class FisheringMade {
     private Region region;
 
     @OneToOne
+    @JoinColumn(referencedColumnName = "typeOfFishId")
     private TypeOfFish typeOfFish;
-
-    //blockchain
-    private String fisheringHash;
 
     private LocalDateTime timeLog;
 
     @Transient
     private String pictureOfFishBase64;
+
+    //Blockchain
+    public int blockchainIndex;
+    public Long timestamp;
+    public String previousHash;
+    public String hash;
+
+    public FisheringMade(Country country) {
+        this.country = country;
+    }
+
+    public FisheringMade(int blockchainIndex, FisheringMade data, String previousHash) {
+        this.fisheringId = data.getFisheringId();
+        this.members = data.getMembers();
+        this.location = data.getLocation();
+        this.pictureOfFish = data.getPictureOfFish();
+        this.weightKg = data.getWeightKg();
+        this.country = data.getCountry();
+        this.region = data.getRegion();
+        this.typeOfFish = data.getTypeOfFish();
+        this.timeLog = data.getTimeLog();
+        this.pictureOfFishBase64 = data.getPictureOfFishBase64();
+
+
+        this.blockchainIndex = blockchainIndex;
+        this.previousHash = previousHash;
+        this.timestamp = System.currentTimeMillis();
+        this.hash = calculateHash();
+    }
+
+    public String calculateHash() {
+        String text = blockchainIndex + previousHash + timestamp +
+                fisheringId + members + location + pictureOfFish + weightKg + country + region
+                + typeOfFish + timeLog;
+
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        final StringBuilder hexString = new StringBuilder();
+        final byte[] bytes = digest.digest(text.getBytes());
+
+        for (final byte b : bytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
 }

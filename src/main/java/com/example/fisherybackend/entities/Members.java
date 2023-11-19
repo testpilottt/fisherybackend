@@ -19,7 +19,6 @@ public class Members {
     private Long memberId;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private List<FisheringMade> fisheringMade;
 
     private String username;

@@ -4,7 +4,6 @@ import com.example.fisherybackend.entities.FisheringMade;
 import com.example.fisherybackend.entities.Members;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
-import com.example.fisherybackend.repository.FisheringMadeRepository;
 import com.example.fisherybackend.service.FisheringMadeService;
 import com.example.fisherybackend.service.MembersService;
 import jakarta.transaction.Transactional;
