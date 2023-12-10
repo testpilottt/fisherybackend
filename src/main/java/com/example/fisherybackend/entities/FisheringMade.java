@@ -9,13 +9,17 @@ import lombok.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FisheringMade {
 
     @Id
@@ -60,7 +64,7 @@ public class FisheringMade {
         this.country = country;
     }
 
-    public FisheringMade(int blockchainIndex, FisheringMade data, String previousHash) {
+    public FisheringMade(int blockchainIndex, FisheringMade data, String previousHash, boolean isExistingBlock) {
         this.fisheringId = data.getFisheringId();
         this.members = data.getMembers();
         this.location = data.getLocation();
@@ -72,17 +76,31 @@ public class FisheringMade {
         this.timeLog = data.getTimeLog();
         this.pictureOfFishBase64 = data.getPictureOfFishBase64();
 
+        if (isExistingBlock) {
+            this.blockchainIndex = data.getBlockchainIndex();
+            this.previousHash = data.getPreviousHash();
+            this.timestamp = data.getTimestamp();
+            this.hash = data.getHash();
+        } else {
+            this.blockchainIndex = blockchainIndex;
+            this.previousHash = previousHash;
+            this.timestamp = System.currentTimeMillis();
+            this.hash = calculateHash();
+        }
 
-        this.blockchainIndex = blockchainIndex;
-        this.previousHash = previousHash;
-        this.timestamp = System.currentTimeMillis();
-        this.hash = calculateHash();
     }
 
     public String calculateHash() {
-        String text = blockchainIndex + previousHash + timestamp +
-                fisheringId + members + location + pictureOfFish + weightKg + country + region
-                + typeOfFish + timeLog;
+        byte[] blobAsBytes = null;
+        try {
+            int blobLength = (int) pictureOfFish.length();
+            blobAsBytes = pictureOfFish.getBytes(1, blobLength);
+        } catch (SQLException e) {
+        }
+
+        String text = blockchainIndex + previousHash + timestamp + members.getMemberId()
+                + location + Arrays.toString(blobAsBytes) + weightKg.toString() + country.getUrl() + region.toString()
+                + typeOfFish.getTypeOfFishId() + timeLog.getDayOfMonth() + timeLog.getMonthValue() + timeLog.getYear() + timeLog.getHour() + timeLog.getSecond();
 
         MessageDigest digest = null;
         try {

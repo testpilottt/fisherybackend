@@ -53,10 +53,8 @@ public class MembersController {
     }
 
     @PostMapping("/createMember")
-    public ResponseEntity<CommonResponse> createMember(@RequestBody MembersRequest membersRequest){
-
+    public ResponseEntity<CommonResponse> createMember(@RequestBody MembersRequest membersRequest) {
         CommonResponse commonResponse = membersService.createMember(membersRequest);
-
         return new ResponseEntity<>(commonResponse,HttpStatus.CREATED);
     }
 
@@ -67,8 +65,7 @@ public class MembersController {
     }
 
     @PutMapping("/updateMember")
-    public ResponseEntity<CommonResponse> updateUser(@RequestBody MembersRequest membersRequest)
-    {
+    public ResponseEntity<CommonResponse> updateUser(@RequestBody MembersRequest membersRequest) {
         CommonResponse commonResponse = membersService.updateMember(membersRequest);
         return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }

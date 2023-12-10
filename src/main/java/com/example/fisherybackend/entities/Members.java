@@ -38,4 +38,8 @@ public class Members {
 
     @Transient
     private Country country;
+
+    public Members(long memberId) {
+        this.memberId = memberId;
+    }
 }

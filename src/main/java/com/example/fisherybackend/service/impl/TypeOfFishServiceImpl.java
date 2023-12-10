@@ -8,6 +8,7 @@ import com.example.fisherybackend.repository.TypeOfFishRepository;
 import com.example.fisherybackend.service.TypeOfFishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional
 @Component
 public class TypeOfFishServiceImpl implements TypeOfFishService {
 

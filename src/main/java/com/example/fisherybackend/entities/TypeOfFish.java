@@ -28,4 +28,8 @@ public class TypeOfFish {
 
     @Transient
     private String typeOfFishPictureBase64;
+
+    public TypeOfFish(long typeOfFishId) {
+        this.typeOfFishId = typeOfFishId;
+    }
 }

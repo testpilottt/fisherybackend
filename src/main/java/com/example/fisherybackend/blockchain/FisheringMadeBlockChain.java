@@ -1,35 +1,41 @@
-package com.example.fisherybackend.BlockChain;
+package com.example.fisherybackend.blockchain;
 
 import com.example.fisherybackend.entities.FisheringMade;
 import com.example.fisherybackend.enums.Country;
+import com.example.fisherybackend.payloads.request.FisheringMadeRequest;
+import com.example.fisherybackend.repository.FisheringMadeRepository;
+import com.example.fisherybackend.service.FisheringMadeService;
+import com.example.fisherybackend.service.impl.FisheringMadeServiceImpl;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FisheringMadeBlockChain {
 
+    @Getter
     private List<FisheringMade> blockChain = new ArrayList<>();
 
-    private void createGenesisBlock() {
-        FisheringMade genesisBlock = new FisheringMade(0, new FisheringMade(Country.MAURITIUS), "GenesisBlock");
-        blockChain.add(genesisBlock);
-        blockChain.add(new FisheringMade(1, new FisheringMade(Country.MAURITIUS), genesisBlock.getHash()));
-    }
-
     private FisheringMade getLatestBlock() {
-        if (blockChain.isEmpty()) {
-            createGenesisBlock();
-        }
         return blockChain.get(blockChain.size() - 1);
     }
-    public void addBlock(FisheringMade data) {
+    public FisheringMade addBlock(FisheringMade data) {
         FisheringMade previousBlock = getLatestBlock();
-        FisheringMade newBlock = new FisheringMade(previousBlock.getBlockchainIndex() + 1, data, previousBlock.getHash());
+        FisheringMade newBlock = new FisheringMade(previousBlock.getBlockchainIndex() + 1, data, previousBlock.getHash(), false);
         blockChain.add(newBlock);
+        return newBlock;
     }
 
     public void addExistingBlock(FisheringMade data) {
-        FisheringMade newBlock = new FisheringMade(data.getBlockchainIndex(), data, data.getHash());
+        FisheringMade newBlock = new FisheringMade(data.getBlockchainIndex(), data, data.getPreviousHash(), true);
         blockChain.add(newBlock);
     }
 
@@ -43,10 +49,6 @@ public class FisheringMadeBlockChain {
             }
         }
         return true;
-    }
-
-    public List<FisheringMade> getBlockChain() {
-        return blockChain;
     }
 
     public void setBlockChain(List<FisheringMade> blockChain) {

@@ -7,10 +7,12 @@ import com.example.fisherybackend.repository.MembersRepository;
 import com.example.fisherybackend.service.MembersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.Optional;
 
+@Transactional
 @Component
 public class MembersServiceImpl implements MembersService {
 
