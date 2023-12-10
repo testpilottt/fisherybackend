@@ -50,8 +50,4 @@ public class FisheringMadeBlockChain {
         }
         return true;
     }
-
-    public void setBlockChain(List<FisheringMade> blockChain) {
-        this.blockChain = blockChain;
-    }
 }

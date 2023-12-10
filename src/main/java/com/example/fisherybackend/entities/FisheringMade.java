@@ -98,9 +98,11 @@ public class FisheringMade {
         } catch (SQLException e) {
         }
 
-        String text = blockchainIndex + previousHash + timestamp + members.getMemberId()
-                + location + Arrays.toString(blobAsBytes) + weightKg.toString() + country.getUrl() + region.toString()
-                + typeOfFish.getTypeOfFishId() + timeLog.getDayOfMonth() + timeLog.getMonthValue() + timeLog.getYear() + timeLog.getHour() + timeLog.getSecond();
+        String blockChainhash = blockchainIndex + previousHash + timestamp + members.getMemberId()
+                + location + Arrays.toString(blobAsBytes) + weightKg.toString() + country.getUrl()
+                + region.toString() + typeOfFish.getTypeOfFishId()
+                + timeLog.getDayOfMonth() + timeLog.getMonthValue() + timeLog.getYear() + timeLog.getHour()
+                + timeLog.getSecond();
 
         MessageDigest digest = null;
         try {
@@ -110,7 +112,7 @@ public class FisheringMade {
             throw new RuntimeException(e);
         }
         final StringBuilder hexString = new StringBuilder();
-        final byte[] bytes = digest.digest(text.getBytes());
+        final byte[] bytes = digest.digest(blockChainhash.getBytes());
 
         for (final byte b : bytes) {
             String hex = Integer.toHexString(0xff & b);

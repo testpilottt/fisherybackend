@@ -106,8 +106,8 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
                     .region(Region.NORTH_EAST)
                     .country(Country.MAURITIUS)
                     .timestamp(System.currentTimeMillis())
-                    .members(new Members(1L))
-                    .typeOfFish(new TypeOfFish(1L))
+                    .members(new Members(-1L))
+                    .typeOfFish(new TypeOfFish(-1L))
                     .pictureOfFish(blob)
                     .timeLog(LocalDateTime.now())
                     .previousHash("GenesisBlock");
