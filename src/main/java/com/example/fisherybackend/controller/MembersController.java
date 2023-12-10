@@ -1,6 +1,6 @@
 package com.example.fisherybackend.controller;
 
-import com.example.fisherybackend.entities.FisheringMade;
+import com.example.fisherybackend.entities.HarvestedFishRecords;
 import com.example.fisherybackend.entities.Members;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -39,11 +38,11 @@ public class MembersController {
             reponseMember.setMemberId(-1L);
             return new ResponseEntity<>(reponseMember, HttpStatus.UNAUTHORIZED);
         } else {
-            List<FisheringMade> fisheringMadeList = fisheringMadeService.getFisheringMadeByMemberId(member.get().getMemberId());
-            if (!fisheringMadeList.isEmpty()) {
+            List<HarvestedFishRecords> harvestedFishRecordsList = fisheringMadeService.getFisheringMadeByMemberId(member.get().getMemberId());
+            if (!harvestedFishRecordsList.isEmpty()) {
                 reponseMember.setCountry(
-                        fisheringMadeList.stream()
-                                .max(Comparator.comparing(FisheringMade::getTimeLog))
+                        harvestedFishRecordsList.stream()
+                                .max(Comparator.comparing(HarvestedFishRecords::getTimeLog))
                                 .get().getCountry());
             }
             reponseMember.setMemberId(member.get().getMemberId());

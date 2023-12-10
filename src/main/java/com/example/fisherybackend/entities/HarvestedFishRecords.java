@@ -12,7 +12,6 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -20,7 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FisheringMade {
+public class HarvestedFishRecords {
 
     @Id
     @GeneratedValue
@@ -60,11 +59,11 @@ public class FisheringMade {
     public String previousHash;
     public String hash;
 
-    public FisheringMade(Country country) {
+    public HarvestedFishRecords(Country country) {
         this.country = country;
     }
 
-    public FisheringMade(int blockchainIndex, FisheringMade data, String previousHash, boolean isExistingBlock) {
+    public HarvestedFishRecords(int blockchainIndex, HarvestedFishRecords data, String previousHash, boolean isExistingBlock) {
         this.fisheringId = data.getFisheringId();
         this.members = data.getMembers();
         this.location = data.getLocation();

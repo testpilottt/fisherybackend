@@ -1,18 +1,16 @@
 package com.example.fisherybackend.controller;
 
-import com.example.fisherybackend.entities.FisheringMade;
+import com.example.fisherybackend.entities.HarvestedFishRecords;
 import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.payloads.request.FisheringMadeRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
 import com.example.fisherybackend.service.FisheringMadeService;
 import jakarta.transaction.Transactional;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -47,11 +45,11 @@ public class FisheringMadeController {
     }
 
     @GetMapping("/retrieveFisheringRecord/{memberId}")
-    public ResponseEntity<List<FisheringMade>> retrieveFisheringRecordByMemberId(@PathVariable("memberId") Long memberId){
+    public ResponseEntity<List<HarvestedFishRecords>> retrieveFisheringRecordByMemberId(@PathVariable("memberId") Long memberId){
 
-        List<FisheringMade> fisheringMadeList = fisheringMadeService.getFisheringMadeByMemberId(memberId);
+        List<HarvestedFishRecords> harvestedFishRecordsList = fisheringMadeService.getFisheringMadeByMemberId(memberId);
 
-        fisheringMadeList.forEach(fm -> {
+        harvestedFishRecordsList.forEach(fm -> {
             try {
                 int blobLength = (int) fm.getPictureOfFish().length();
                 byte[] blobAsBytes = fm.getPictureOfFish().getBytes(1, blobLength);
@@ -68,7 +66,7 @@ public class FisheringMadeController {
             }
         });
 
-        return new ResponseEntity<>(fisheringMadeList,HttpStatus.OK);
+        return new ResponseEntity<>(harvestedFishRecordsList,HttpStatus.OK);
     }
 
     public String calculateHash(String text) {

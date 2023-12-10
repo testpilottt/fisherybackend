@@ -19,7 +19,7 @@ public class Members {
     private Long memberId;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<FisheringMade> fisheringMade;
+    private List<HarvestedFishRecords> harvestedFishRecords;
 
     private String username;
     private String firstName;

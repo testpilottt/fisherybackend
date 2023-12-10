@@ -1,10 +1,6 @@
 package com.example.fisherybackend.payloads.request;
 
-import com.example.fisherybackend.entities.FisheringMade;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
+import com.example.fisherybackend.entities.HarvestedFishRecords;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -20,7 +16,7 @@ public class MembersRequest {
     @NotNull
     private Long userId;
 
-    private List<FisheringMade> fisheringMade;
+    private List<HarvestedFishRecords> harvestedFishRecords;
     private String username;
     private String firstName;
 

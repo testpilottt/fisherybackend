@@ -1,11 +1,9 @@
 package com.example.fisherybackend.payloads.request;
 
-import com.example.fisherybackend.entities.FisheringMade;
+import com.example.fisherybackend.entities.HarvestedFishRecords;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-
-import java.sql.Blob;
 
 @Getter
 public class TypeOfFishRequest {
@@ -16,7 +14,7 @@ public class TypeOfFishRequest {
 
     @NotBlank
     @NotNull
-    private FisheringMade fisheringMade;
+    private HarvestedFishRecords harvestedFishRecords;
 
     private String typeOfFishName;
     private Boolean isActive;

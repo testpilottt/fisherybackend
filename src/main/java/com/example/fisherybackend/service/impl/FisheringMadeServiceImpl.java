@@ -2,7 +2,7 @@ package com.example.fisherybackend.service.impl;
 
 import com.example.fisherybackend.blockchain.FisheringMadeBlockChain;
 import com.example.fisherybackend.entities.CountrySetting;
-import com.example.fisherybackend.entities.FisheringMade;
+import com.example.fisherybackend.entities.HarvestedFishRecords;
 import com.example.fisherybackend.entities.Members;
 import com.example.fisherybackend.entities.TypeOfFish;
 import com.example.fisherybackend.enums.CommonResponseReason;
@@ -20,7 +20,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,32 +61,32 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         Members members = membersRepository.findById(fisheringMadeRequest.getMemberId()).get();
         TypeOfFish typeOfFish = typeOfFishRepository.findById(fisheringMadeRequest.getTypeOfFishId()).get();
 
-        FisheringMade fisheringMade = new FisheringMade();
+        HarvestedFishRecords harvestedFishRecords = new HarvestedFishRecords();
 
-        fisheringMade.setMembers(members);
-        fisheringMade.setTypeOfFish(typeOfFish);
-        fisheringMade.setCountry(fisheringMadeRequest.getCountry());
-        fisheringMade.setLocation(fisheringMadeRequest.getLocation());
-        fisheringMade.setRegion(fisheringMadeRequest.getRegion());
-        fisheringMade.setWeightKg(fisheringMadeRequest.getWeightKg());
-        fisheringMade.setRegion(CalculateRegion(countrySetting, fisheringMadeRequest.getLocation()));
-        fisheringMade.setTimeLog(LocalDateTime.now());
+        harvestedFishRecords.setMembers(members);
+        harvestedFishRecords.setTypeOfFish(typeOfFish);
+        harvestedFishRecords.setCountry(fisheringMadeRequest.getCountry());
+        harvestedFishRecords.setLocation(fisheringMadeRequest.getLocation());
+        harvestedFishRecords.setRegion(fisheringMadeRequest.getRegion());
+        harvestedFishRecords.setWeightKg(fisheringMadeRequest.getWeightKg());
+        harvestedFishRecords.setRegion(CalculateRegion(countrySetting, fisheringMadeRequest.getLocation()));
+        harvestedFishRecords.setTimeLog(LocalDateTime.now());
 
         try {
             Blob blob = new SerialBlob(fisheringMadeRequest.getPictureOfFish().getBytes());
-            fisheringMade.setPictureOfFish(blob);
+            harvestedFishRecords.setPictureOfFish(blob);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        IsValidAndNewBlockCreatedDTO isValidAndNewBlockCreatedDTO = isBlockChainValid(fisheringMade);
+        IsValidAndNewBlockCreatedDTO isValidAndNewBlockCreatedDTO = isBlockChainValid(harvestedFishRecords);
 
         if (!isValidAndNewBlockCreatedDTO.isValid) {
             return new CommonResponse("Blockchain has been tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED);
         }
 
-        if (Objects.nonNull(isValidAndNewBlockCreatedDTO.getNewBlockFisheringMade())) {
-            fisheringMadeRepository.save(isValidAndNewBlockCreatedDTO.getNewBlockFisheringMade());
+        if (Objects.nonNull(isValidAndNewBlockCreatedDTO.getNewBlockHarvestedFishRecords())) {
+            fisheringMadeRepository.save(isValidAndNewBlockCreatedDTO.getNewBlockHarvestedFishRecords());
         }
 
         return new CommonResponse("New Fish Harvested Record Created");
@@ -99,7 +98,7 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
             byte[] bytes = "GenesisBlock".getBytes();
             Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);;
 
-            FisheringMade.FisheringMadeBuilder genesisBlockBuilder = FisheringMade.builder()
+            HarvestedFishRecords.HarvestedFishRecordsBuilder genesisBlockBuilder = HarvestedFishRecords.builder()
                     .blockchainIndex(0)
                     .weightKg((double) 0)
                     .location("GenesisBlock")
@@ -112,8 +111,8 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
                     .timeLog(LocalDateTime.now())
                     .previousHash("GenesisBlock");
 
-            FisheringMade genesisBlock = genesisBlockBuilder.build();
-            FisheringMade genesisBlockFollowUp = genesisBlockBuilder.build();
+            HarvestedFishRecords genesisBlock = genesisBlockBuilder.build();
+            HarvestedFishRecords genesisBlockFollowUp = genesisBlockBuilder.build();
 
             genesisBlock.setHash(genesisBlock.calculateHash());
 
@@ -125,19 +124,19 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         }
     }
 
-    private IsValidAndNewBlockCreatedDTO isBlockChainValid(FisheringMade fisheringMade) {
+    private IsValidAndNewBlockCreatedDTO isBlockChainValid(HarvestedFishRecords harvestedFishRecords) {
         FisheringMadeBlockChain fisheringMadeBlockChain = new FisheringMadeBlockChain();
         IsValidAndNewBlockCreatedDTO isValidAndNewBlockCreatedDTO = new IsValidAndNewBlockCreatedDTO();
 
-        if (Objects.nonNull(fisheringMade)) {
+        if (Objects.nonNull(harvestedFishRecords)) {
             instantiateBlockChain();
         }
-        List<FisheringMade> fisheringMadeFromDB = fisheringMadeRepository.findAll();
+        List<HarvestedFishRecords> harvestedFishRecordsFromDB = fisheringMadeRepository.findAll();
 
-        fisheringMadeFromDB.stream().sorted(Comparator.comparing(FisheringMade::getBlockchainIndex))
+        harvestedFishRecordsFromDB.stream().sorted(Comparator.comparing(HarvestedFishRecords::getBlockchainIndex))
                 .forEach(fisheringMadeBlockChain::addExistingBlock);
-        if (Objects.nonNull(fisheringMade)) {
-            isValidAndNewBlockCreatedDTO.setNewBlockFisheringMade(fisheringMadeBlockChain.addBlock(fisheringMade));
+        if (Objects.nonNull(harvestedFishRecords)) {
+            isValidAndNewBlockCreatedDTO.setNewBlockHarvestedFishRecords(fisheringMadeBlockChain.addBlock(harvestedFishRecords));
         }
         isValidAndNewBlockCreatedDTO.setValid(fisheringMadeBlockChain.isChainValid());
 
@@ -171,20 +170,20 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
     }
 
     @Override
-    public List<FisheringMade> getFisheringMadeByMemberId(Long memberId) {
-        List<FisheringMade> fisheringMadeListFromDb = fisheringMadeRepository.searchFisheringMadeByMembersMemberId(memberId);
+    public List<HarvestedFishRecords> getFisheringMadeByMemberId(Long memberId) {
+        List<HarvestedFishRecords> harvestedFishRecordsListFromDb = fisheringMadeRepository.searchFisheringMadeByMembersMemberId(memberId);
 
         if (!isBlockChainValid(null).isValid) {
             throw new RuntimeException();
         }
 
-        return fisheringMadeListFromDb;
+        return harvestedFishRecordsListFromDb;
     }
 
     @Getter
     @Setter
     class IsValidAndNewBlockCreatedDTO {
         boolean isValid;
-        FisheringMade newBlockFisheringMade;
+        HarvestedFishRecords newBlockHarvestedFishRecords;
     }
 }
