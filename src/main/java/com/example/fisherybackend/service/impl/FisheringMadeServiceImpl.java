@@ -83,7 +83,7 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         IsValidAndNewBlockCreatedDTO isValidAndNewBlockCreatedDTO = isBlockChainValid(fisheringMade);
 
         if (!isValidAndNewBlockCreatedDTO.isValid) {
-            return new CommonResponse("Blockchain tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED);
+            return new CommonResponse("Blockchain has been tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED);
         }
 
         if (Objects.nonNull(isValidAndNewBlockCreatedDTO.getNewBlockFisheringMade())) {
@@ -99,7 +99,7 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
             byte[] bytes = "GenesisBlock".getBytes();
             Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);;
 
-            FisheringMade genesisBlock = FisheringMade.builder()
+            FisheringMade.FisheringMadeBuilder genesisBlockBuilder = FisheringMade.builder()
                     .blockchainIndex(0)
                     .weightKg((double) 0)
                     .location("GenesisBlock")
@@ -110,22 +110,14 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
                     .typeOfFish(new TypeOfFish(1L))
                     .pictureOfFish(blob)
                     .timeLog(LocalDateTime.now())
-                    .previousHash("GenesisBlock").build();
+                    .previousHash("GenesisBlock");
+
+            FisheringMade genesisBlock = genesisBlockBuilder.build();
+            FisheringMade genesisBlockFollowUp = genesisBlockBuilder.build();
+
             genesisBlock.setHash(genesisBlock.calculateHash());
 
-            FisheringMade genesisBlockFollowUp = FisheringMade.builder()
-                    .blockchainIndex(1)
-                    .weightKg((double) 0)
-                    .location("GenesisBlock")
-                    .region(Region.NORTH_EAST)
-                    .country(Country.MAURITIUS)
-                    .timestamp(System.currentTimeMillis())
-                    .members(new Members(1L))
-                    .typeOfFish(new TypeOfFish(1L))
-                    .pictureOfFish(blob)
-                    .timeLog(LocalDateTime.now())
-                    .previousHash("GenesisBlock").build();
-
+            genesisBlockFollowUp.setBlockchainIndex(genesisBlock.getBlockchainIndex() + 1);
             genesisBlockFollowUp.setPreviousHash(genesisBlock.getHash());
             genesisBlockFollowUp.setHash(genesisBlockFollowUp.calculateHash());
 
@@ -144,7 +136,6 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
 
         fisheringMadeFromDB.stream().sorted(Comparator.comparing(FisheringMade::getBlockchainIndex))
                 .forEach(fisheringMadeBlockChain::addExistingBlock);
-        fisheringMadeBlockChain.isChainValid();
         if (Objects.nonNull(fisheringMade)) {
             isValidAndNewBlockCreatedDTO.setNewBlockFisheringMade(fisheringMadeBlockChain.addBlock(fisheringMade));
         }

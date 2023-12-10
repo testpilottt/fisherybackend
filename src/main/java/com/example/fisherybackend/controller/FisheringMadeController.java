@@ -32,7 +32,7 @@ public class FisheringMadeController {
 
         String data = fisheringMadeRequest.getLocation() + fisheringMadeRequest.getWeightKg() + fisheringMadeRequest.getCountry().name() + fisheringMadeRequest.getMemberId() + fisheringMadeRequest.getTypeOfFishId() + fisheringMadeRequest.getPictureOfFish();
         if (!fisheringMadeRequest.getHash().equals(calculateHash(data))) {
-            return new ResponseEntity<>(new CommonResponse("Blockchain tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new CommonResponse("Hash has been tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED), HttpStatus.CONFLICT);
         }
 
         CommonResponse commonResponse = fisheringMadeService.createFisheringMade(fisheringMadeRequest);
