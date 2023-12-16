@@ -86,7 +86,6 @@ public class HarvestedFishRecords {
             this.timestamp = System.currentTimeMillis();
             this.hash = calculateHash();
         }
-
     }
 
     public String calculateHash() {
@@ -97,9 +96,9 @@ public class HarvestedFishRecords {
         } catch (SQLException e) {
         }
 
-        String blockChainhash = blockchainIndex + previousHash + timestamp + members.getMemberId()
-                + location + Arrays.toString(blobAsBytes) + weightKg.toString() + country.getUrl()
-                + region.toString() + typeOfFish.getTypeOfFishId()
+        String blockChainhash = blockchainIndex + previousHash + timestamp + location
+                + Arrays.toString(blobAsBytes) + weightKg.toString() + country.getUrl()
+                + region.toString()
                 + timeLog.getDayOfMonth() + timeLog.getMonthValue() + timeLog.getYear() + timeLog.getHour()
                 + timeLog.getSecond();
 

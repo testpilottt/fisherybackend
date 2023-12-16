@@ -21,4 +21,9 @@ public class CountrySetting {
 
     private String latitude;
     private String longtitude;
+
+    private Double ThreshHoldNorthEast;
+    private Double ThreshHoldNorthWest;
+    private Double ThreshHoldSouthEast;
+    private Double ThreshHoldSouthWest;
 }
