@@ -1,9 +1,11 @@
 package com.example.fisherybackend.controller;
 
+import com.example.fisherybackend.entities.CountrySetting;
 import com.example.fisherybackend.entities.HarvestedFishRecords;
 import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.payloads.request.FisheringMadeRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
+import com.example.fisherybackend.repository.FisheringMadeRepository;
 import com.example.fisherybackend.service.FisheringMadeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +18,29 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Transactional
 @RestController
 @RequestMapping("/fishery")
 public class FisheringMadeController {
 
+    public static final String GENESIS_BLOCK = "GenesisBlock";
     @Autowired
     private FisheringMadeService fisheringMadeService;
+
+    @Autowired
+    private FisheringMadeRepository fisheringMadeRepository;
 
     @PostMapping("/createFisheringRecord")
     public ResponseEntity<CommonResponse> createFisheringRecord(@RequestBody FisheringMadeRequest fisheringMadeRequest){
 
-        String data = fisheringMadeRequest.getLocation() + fisheringMadeRequest.getWeightKg() + fisheringMadeRequest.getCountry().name() + fisheringMadeRequest.getMemberId() + fisheringMadeRequest.getTypeOfFishId() + fisheringMadeRequest.getPictureOfFish();
+        String data = fisheringMadeRequest.getLocation() + fisheringMadeRequest.getWeightKg() + fisheringMadeRequest.getCountry().name()
+                + fisheringMadeRequest.getMemberId() + fisheringMadeRequest.getTypeOfFishId() + fisheringMadeRequest.getPictureOfFish();
         if (!fisheringMadeRequest.getHash().equals(calculateHash(data))) {
-            return new ResponseEntity<>(new CommonResponse("Hash has been tampered.", false, CommonResponseReason.BLOCKCHAIN_TAMPERED), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new CommonResponse("Hash has been tampered.",
+                    false, CommonResponseReason.BLOCKCHAIN_TAMPERED), HttpStatus.CONFLICT);
         }
 
         CommonResponse commonResponse = fisheringMadeService.createFisheringMade(fisheringMadeRequest);
@@ -89,5 +99,30 @@ public class FisheringMadeController {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    @GetMapping("/getHarvestedFishRecords")
+    public ResponseEntity<List<HarvestedFishRecords>> getHarvestedFishRecords() {
+        List<HarvestedFishRecords> harvestedFishRecordsList = fisheringMadeRepository.findAll().stream()
+                .filter(hfr -> !GENESIS_BLOCK.equals(hfr.getLocation()))
+                .collect(Collectors.toList());
+        harvestedFishRecordsList.forEach(hfr -> {
+            hfr.setMembersId(hfr.getMembers().getMemberId());
+
+            if (Objects.nonNull(hfr.getTypeOfFish()) && Objects.nonNull(hfr.getTypeOfFish().getTypeOfFishPicture())) {
+                try {
+                    int blobLength = (int) hfr.getTypeOfFish().getTypeOfFishPicture().length();
+                    byte[] blobAsBytes = hfr.getTypeOfFish().getTypeOfFishPicture().getBytes(1, blobLength);
+                    String encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
+
+                    hfr.getTypeOfFish().setTypeOfFishPictureBase64(encodedString);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+
+        return new ResponseEntity<>(harvestedFishRecordsList, HttpStatus.CREATED);
     }
 }

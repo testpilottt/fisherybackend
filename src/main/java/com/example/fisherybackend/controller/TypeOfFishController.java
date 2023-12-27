@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 @Transactional
 @RestController
@@ -42,14 +43,16 @@ public class TypeOfFishController {
         List<TypeOfFish> typeOfFishList = typeOfFishService.getAllTypeOfFish();
 
         typeOfFishList.forEach(tof -> {
-            try {
-                int blobLength = (int) tof.getTypeOfFishPicture().length();
-                byte[] blobAsBytes = tof.getTypeOfFishPicture().getBytes(1, blobLength);
-                String encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
+            if (Objects.nonNull(tof.getTypeOfFishPicture())) {
+                try {
+                    int blobLength = (int) tof.getTypeOfFishPicture().length();
+                    byte[] blobAsBytes = tof.getTypeOfFishPicture().getBytes(1, blobLength);
+                    String encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
 
-                tof.setTypeOfFishPictureBase64(encodedString);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                    tof.setTypeOfFishPictureBase64(encodedString);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 

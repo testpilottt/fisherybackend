@@ -28,11 +28,13 @@ public class TypeOfFishServiceImpl implements TypeOfFishService {
         TypeOfFish typeOfFish = new TypeOfFish();
 
         typeOfFish.setTypeOfFishName(typeOfFishRequest.getTypeOfFishName());
-        try {
-            Blob blob = new SerialBlob(typeOfFishRequest.getTypeOfFishPicture());
-            typeOfFish.setTypeOfFishPicture(blob);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (Objects.nonNull(typeOfFishRequest.getTypeOfFishPicture())) {
+            try {
+                Blob blob = new SerialBlob(typeOfFishRequest.getTypeOfFishPicture());
+                typeOfFish.setTypeOfFishPicture(blob);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         typeOfFish.setActive(typeOfFishRequest.getIsActive());

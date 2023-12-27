@@ -24,7 +24,7 @@ public class MembersRequest {
     private String password;
     private AccessLevel accessLevel;
     private Long hoursLogged;
-    private Blob profilePicture;
+    private byte[] profilePicture;
 
     //blockchain
     private String membersHash;

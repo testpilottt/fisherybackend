@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -26,19 +30,23 @@ public class MembersServiceImpl implements MembersService {
 
     @Override
     public CommonResponse createMember(MembersRequest membersRequest) {
-
         Members member = new Members();
 
         member.setUsername(membersRequest.getUsername());
         member.setPassword(membersRequest.getPassword());
-        member.setProfilePicture(membersRequest.getProfilePicture());
         member.setFirstName(membersRequest.getFirstName());
         member.setLastName(membersRequest.getLastName());
         member.setHoursLogged(membersRequest.getHoursLogged());
         member.setMembersHash(membersRequest.getMembersHash());
 
-        membersRepository.save(member);
+        try {
+            Blob blob = new SerialBlob(membersRequest.getProfilePicture());
+            member.setProfilePicture(blob);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
+        membersRepository.save(member);
         return new CommonResponse("New Member Created");
     }
 
@@ -51,7 +59,14 @@ public class MembersServiceImpl implements MembersService {
                 member -> {
                     member.setUsername(membersRequest.getUsername());
                     member.setPassword(membersRequest.getPassword());
-                    member.setProfilePicture(membersRequest.getProfilePicture());
+                    if (Objects.nonNull(membersRequest.getProfilePicture())) {
+                        try {
+                            Blob blob = new SerialBlob(membersRequest.getProfilePicture());
+                            member.setProfilePicture(blob);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                     member.setFirstName(membersRequest.getFirstName());
                     member.setLastName(membersRequest.getLastName());
                     member.setHoursLogged(membersRequest.getHoursLogged());

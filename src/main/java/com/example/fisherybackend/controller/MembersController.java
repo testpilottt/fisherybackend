@@ -4,6 +4,7 @@ import com.example.fisherybackend.entities.HarvestedFishRecords;
 import com.example.fisherybackend.entities.Members;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
+import com.example.fisherybackend.repository.MembersRepository;
 import com.example.fisherybackend.service.FisheringMadeService;
 import com.example.fisherybackend.service.MembersService;
 import jakarta.transaction.Transactional;
@@ -12,9 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @RestController
@@ -26,6 +27,9 @@ public class MembersController {
 
     @Autowired
     private FisheringMadeService fisheringMadeService;
+
+    @Autowired
+    private MembersRepository membersRepository;
 
     @PostMapping("/membersLogin")
     public ResponseEntity<Members> memberLoginByUsernamePassword(@RequestBody MembersRequest membersRequest) {
@@ -69,4 +73,24 @@ public class MembersController {
         return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/getMembers")
+    public ResponseEntity<List<Members>> getMembers() {
+        List<Members> membersList = membersRepository.findAll();
+
+        membersList.forEach(member -> {
+            if (Objects.nonNull(member.getProfilePicture())) {
+                try {
+                    int blobLength = (int) member.getProfilePicture().length();
+                    byte[] blobAsBytes = member.getProfilePicture().getBytes(1, blobLength);
+                    String encodedString = Base64.getEncoder().encodeToString(blobAsBytes);
+
+                    member.setProfilePictureBase64(encodedString);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        return new ResponseEntity<>(membersList, HttpStatus.CREATED);
+    }
 }
