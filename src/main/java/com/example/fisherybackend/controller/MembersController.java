@@ -2,6 +2,7 @@ package com.example.fisherybackend.controller;
 
 import com.example.fisherybackend.entities.HarvestedFishRecords;
 import com.example.fisherybackend.entities.Members;
+import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
 import com.example.fisherybackend.repository.MembersRepository;
@@ -58,7 +59,11 @@ public class MembersController {
     @PostMapping("/createMember")
     public ResponseEntity<CommonResponse> createMember(@RequestBody MembersRequest membersRequest) {
         CommonResponse commonResponse = membersService.createMember(membersRequest);
-        return new ResponseEntity<>(commonResponse,HttpStatus.CREATED);
+        if (commonResponse.getCommonResponseReason() == CommonResponseReason.MEMBER_USERNAME_NOTUNIQUE) {
+            return new ResponseEntity<>(commonResponse,HttpStatus.ALREADY_REPORTED);
+        } else {
+            return new ResponseEntity<>(commonResponse,HttpStatus.CREATED);
+        }
     }
 
     @DeleteMapping("/deleteMember/{memberId}")

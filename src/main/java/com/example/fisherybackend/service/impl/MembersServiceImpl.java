@@ -1,6 +1,7 @@
 package com.example.fisherybackend.service.impl;
 
 import com.example.fisherybackend.entities.Members;
+import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
 import com.example.fisherybackend.repository.MembersRepository;
@@ -30,6 +31,11 @@ public class MembersServiceImpl implements MembersService {
 
     @Override
     public CommonResponse createMember(MembersRequest membersRequest) {
+
+        Optional<Members> optionalMember = membersRepository.findByUsername(membersRequest.getUsername());
+        if (optionalMember.isPresent()) {
+            return new CommonResponse("Member already exist, try with another username.", false, CommonResponseReason.MEMBER_USERNAME_NOTUNIQUE);
+        }
         Members member = new Members();
 
         member.setUsername(membersRequest.getUsername());
