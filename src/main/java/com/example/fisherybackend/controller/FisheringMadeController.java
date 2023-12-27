@@ -123,6 +123,6 @@ public class FisheringMadeController {
         });
 
 
-        return new ResponseEntity<>(harvestedFishRecordsList, HttpStatus.CREATED);
+        return new ResponseEntity<>(harvestedFishRecordsList, HttpStatus.OK);
     }
 }

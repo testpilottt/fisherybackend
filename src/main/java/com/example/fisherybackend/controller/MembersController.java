@@ -96,6 +96,6 @@ public class MembersController {
             }
         });
 
-        return new ResponseEntity<>(membersList, HttpStatus.CREATED);
+        return new ResponseEntity<>(membersList, HttpStatus.OK);
     }
 }

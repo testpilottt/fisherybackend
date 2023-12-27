@@ -23,6 +23,6 @@ public class CountrySettingController {
     @GetMapping("/getCountrySettings")
     public ResponseEntity<List<CountrySetting>> getCountrySettings() {
         List<CountrySetting> countrySettings = countrySettingRepository.findAll();
-        return new ResponseEntity<>(countrySettings, HttpStatus.CREATED);
+        return new ResponseEntity<>(countrySettings, HttpStatus.OK);
     }
 }
