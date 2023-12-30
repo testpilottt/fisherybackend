@@ -1,9 +1,9 @@
 package com.example.fisherybackend.payloads.request;
 
 import com.example.fisherybackend.entities.HarvestedFishRecords;
+import com.example.fisherybackend.enums.AccessLevel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.sql.Blob;

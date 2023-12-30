@@ -1,6 +1,7 @@
 package com.example.fisherybackend.service.impl;
 
 import com.example.fisherybackend.entities.Members;
+import com.example.fisherybackend.enums.AccessLevel;
 import com.example.fisherybackend.enums.CommonResponseReason;
 import com.example.fisherybackend.payloads.request.MembersRequest;
 import com.example.fisherybackend.payloads.response.CommonResponse;
@@ -42,14 +43,21 @@ public class MembersServiceImpl implements MembersService {
         member.setPassword(membersRequest.getPassword());
         member.setFirstName(membersRequest.getFirstName());
         member.setLastName(membersRequest.getLastName());
-        member.setHoursLogged(membersRequest.getHoursLogged());
-        member.setMembersHash(membersRequest.getMembersHash());
+        member.setAccessLevel(Objects.isNull(membersRequest.getAccessLevel()) ? AccessLevel.MEMBER : membersRequest.getAccessLevel());
+        if (Objects.nonNull(membersRequest.getHoursLogged())) {
+            member.setHoursLogged(membersRequest.getHoursLogged());
+        }
+        if (Objects.nonNull(membersRequest.getMembersHash())) {
+            member.setMembersHash(membersRequest.getMembersHash());
+        }
 
-        try {
-            Blob blob = new SerialBlob(membersRequest.getProfilePicture());
-            member.setProfilePicture(blob);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (Objects.nonNull(membersRequest.getProfilePicture())) {
+            try {
+                Blob blob = new SerialBlob(membersRequest.getProfilePicture());
+                member.setProfilePicture(blob);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         membersRepository.save(member);
