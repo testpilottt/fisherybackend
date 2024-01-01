@@ -44,6 +44,9 @@ public class MembersController {
             return new ResponseEntity<>(reponseMember, HttpStatus.UNAUTHORIZED);
         } else {
             List<HarvestedFishRecords> harvestedFishRecordsList = fisheringMadeService.getFisheringMadeByMemberId(member.get().getMemberId());
+            if (Objects.isNull(harvestedFishRecordsList)) {
+                return new ResponseEntity<>(reponseMember, HttpStatus.CONFLICT);
+            }
             if (!harvestedFishRecordsList.isEmpty()) {
                 reponseMember.setCountry(
                         harvestedFishRecordsList.stream()

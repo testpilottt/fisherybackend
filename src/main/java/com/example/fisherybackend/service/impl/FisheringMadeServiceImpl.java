@@ -172,7 +172,7 @@ public class FisheringMadeServiceImpl implements FisheringMadeService {
         List<HarvestedFishRecords> harvestedFishRecordsListFromDb = fisheringMadeRepository.searchFisheringMadeByMembersMemberId(memberId);
 
         if (!isBlockChainValid(null).isValid) {
-            throw new RuntimeException();
+            return null;
         }
 
         return harvestedFishRecordsListFromDb;

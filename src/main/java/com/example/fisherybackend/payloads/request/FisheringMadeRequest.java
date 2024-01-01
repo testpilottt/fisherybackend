@@ -5,10 +5,12 @@ import com.example.fisherybackend.entities.TypeOfFish;
 import com.example.fisherybackend.enums.Country;
 import com.example.fisherybackend.enums.Region;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Blob;
 
 @Getter
+@Setter
 public class FisheringMadeRequest {
 
     private Long fisheringId;
