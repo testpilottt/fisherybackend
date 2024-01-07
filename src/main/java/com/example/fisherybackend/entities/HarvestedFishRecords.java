@@ -29,6 +29,7 @@ public class HarvestedFishRecords {
     @JoinColumn(name = "memberId")
     @JsonIgnore
     private Members members;
+    @Transient
     private Long membersId;
 
     private String location;
